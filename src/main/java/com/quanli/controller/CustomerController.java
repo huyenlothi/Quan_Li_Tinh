@@ -30,7 +30,7 @@ public class CustomerController {
     }
 
     @ModelAttribute("provinces")
-    private Iterable<Province> provinces(){
+    Iterable<Province> provinces(){
         return provinceService.findAll();
     }
 

@@ -8,7 +8,7 @@ import org.hibernate.event.spi.SaveOrUpdateEvent;
 
 @Aspect
 public class MyLogger {
-    @AfterReturning(pointcut = "within(com.quanli.controller.CustomerController.*)",returning = "result")
+    @AfterReturning(pointcut = "within(com.quanli.controller.CustomerController)",returning = "result")
     public void log(JoinPoint joinPoint, Object result){
         System.out.println("Demo");
         System.out.println("Start log");
