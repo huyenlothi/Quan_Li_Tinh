@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit</title>
+</head>
+<body>
+<h2>Edit Customer</h2>
+<a href="/customer/"> Back to Customer List</a>
+<form   th:object="${customer}" method="post">
+    <input type="hidden" th:field="*{id}" >
+    <table>
+        <tr>
+            <td>First Name</td>
+            <td><input type="text" name="firstName" th:value="${customer.getFirstName()}"></td>
+        </tr>
+        <tr>
+            <td>Last Name</td>
+            <td><input type="text" name="lastName" th:value="${customer.getLastName()}"></td>
+        </tr>
+        <tr>
+            <td>Province</td>
+            <td><select name="province" id="province"  th:field="*{province}" >
+                <option th:each="c:${provinces}" th:value="${c.getId()}" th:text="${c.getProvince()}"></option>
+            </select>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><button type="submit">Edit</button></td>
+        </tr>
+    </table>
+
+
+</form>
+</body>
+</html>
