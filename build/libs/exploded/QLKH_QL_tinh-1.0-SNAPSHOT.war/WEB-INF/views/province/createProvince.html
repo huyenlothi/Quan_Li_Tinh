@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>create</title>
+</head>
+<body>
+<h1>Create new Province</h1>
+<a href="/province">Back to Province list</a>
+<form method="post" th:object="${province}">
+    <label >Province</label>
+    <input type="text" th:field="*{province}" name=province/>
+    <input type="submit" value="Create"/>
+</form>
+</body>
+</html>

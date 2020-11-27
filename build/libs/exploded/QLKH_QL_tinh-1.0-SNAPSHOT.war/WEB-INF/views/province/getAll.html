@@ -6,15 +6,22 @@
 </head>
 <body>
 <h1>List Province</h1>
+<p>
+<a href="/province/create">Create new Province</a>
+</p>
 <table border="1px">
     <tr>
         <th>ID</th>
         <th>Province</th>
+        <th>Edit</th>
+        <th>Delete</th>
     </tr>
     <th:block th:each="province:${province}">
         <tr>
-        <td th:text="${province.id}"></td>
+            <td th:text="${province.id}"></td>
             <td th:text="${province.province}"></td>
+            <td><a th:href="@{/province/edit/__${province.getId()}__}">Edit</a></td>
+            <td><a th:href="@{/province/delete/__${province.getId()}__}">Delete</a></td>
         </tr>
     </th:block>
 </table>
