@@ -10,7 +10,7 @@
 <form method="post" th:object="${province}">
     <input type="hidden" th:field="*{id}" th:value="${province.getId()}">
     <label >Province</label>
-    <input type="text" th:field="*{province}" th:value="${province.getProvince()}" >
+    <input type="text" th:field="*{nameProvince}" th:value="${province.getNameProvince()}" >
     <input type="submit" value="Edit">
 </form>
 </body>

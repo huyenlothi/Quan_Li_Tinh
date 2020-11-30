@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
+<head th:replace="/layout :: head">
     <meta charset="UTF-8">
     <title>Edit</title>
 </head>
@@ -22,7 +22,7 @@
         <tr>
             <td>Province</td>
             <td><select name="province" id="province"  th:field="*{province}" >
-                <option th:each="c:${provinces}" th:value="${c.getId()}" th:text="${c.getProvince()}"></option>
+                <option th:each="c:${provinces}" th:value="${c.getId()}" th:text="${c.getNameProvince()}"></option>
             </select>
             </td>
         </tr>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        function deleteClass(e){
+            let idClass = e.getAttribute("href");
+            $.ajax({
+                type:"DELETE",
+                url: "/classes/" + idClass,
+                success: function (data){
+                    successHandler();
+                }
+            })
+            event.preventDefault();
+        }
+        function successHandler() {
+            $.ajax({
+                type:"GET",
+                //tên API
+                url:"/classes",
+                //xử lý khi thành công
+                success: function(asfasf){
+                    // hien thi danh sach o day
+                    let content ='    <tr>\n' +
+                        '        <td>ten lop</td>\n' +
+                        '        <td>xoa lop</td>\n' +
+                        '    </tr>';
+                    for (let i = 0 ; i < asfasf.length; i++) {
+                        content += getClass(asfasf[i]);
+                    }
+                    document.getElementById('classList').innerHTML = content;
+                }
+            });
+        }
+        function getClass(classe1) {
+            return `<tr><td >${classe1.name}</td>`+
+                `<td><a onclick="deleteClass(this)" href="${classe1.id}">xoa</a></td></tr>`;
+        }
+    </script>
+</head>
+<body>
+<h1>Danh sach lop</h1>
+<table id="classList">
+    <tr>
+        <td>ten lop</td>
+        <td>Action</td>
+    </tr>
+    <th:block th:each="c: ${list}">
+        <tr>
+            <td th:text="${c.name}"></td>
+            <td><a th:href="${c.id}" onclick="deleteClass(this)">delete</a> </td>
+        </tr>
+    </th:block>
+</table>
+</body>
+</html>

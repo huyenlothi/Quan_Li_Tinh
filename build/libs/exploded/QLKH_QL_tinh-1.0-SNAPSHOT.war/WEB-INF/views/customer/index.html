@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript">
+            function addCustomer(){
+                let firstName = $('#firstName').val();
+                let lastName= $('#lastName').val();
+                let province= $('#province').val();
+
+                let json = {firstName : firstName,
+                    lastName: lastName,
+                    province: {
+                    id: province
+                    }
+                };
+                $.ajax({
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    type:"POST",
+                    data: JSON.stringify(json),
+                    //tên API
+                    url:"/customers/",
+                    //xử lý khi thành công
+                    success: function () {
+                        successHandler();
+                    }
+            })
+                //chặn sự kiện mặc định của thẻ
+                event.preventDefault();
+            }
+            function successHandler(){
+                $.ajax({
+                    type:"GET",
+                    url:"/customers",
+                    success: function (list){
+                        let content='    <tr>\n '+'' +
+                            '<td>Id</td>\n'+
+                            '<td>firstName</td>'+
+                            '<td>lastName</td>'+
+                            '<td>province</td>'+
+                            '</tr>';
+                        for(let i = 0; i < list.length; i++){
+                            content +=getCustomer(list[i])
+                        }
+                        document.getElementById('customerList').innerHTML = content;
+                    }
+                })
+            }
+            function getCustomer(customer1){
+                return `<tr><td>${customer1.id}</td>`+
+                    `<td>${customer1.firstName}</td>`+
+                    `<td>${customer1.lastName}</td>` +
+                    `<td>${customer1.province.nameProvince}</td>`+
+                    `<td><a onclick="deleteCustomer(this)" href="${customer1.id}">delete</a> </td></tr>`
+            }
+
+        function deleteCustomer(e){
+            let idCustomer= e.getAttribute("href");
+            $.ajax({
+                type:"DELETE",
+                url: "/customers/" + idCustomer,
+                success: function (){
+                    successHandler();
+                }
+            })
+            event.preventDefault();
+        }
+        function successHandler(){
+            $.ajax({
+                type:"GET",
+                url:"/customers",
+                success: function (list){
+                    let content='    <tr>\n '+'' +
+                        '<td>Id</td>\n'+
+                        '<td>firstName</td>'+
+                        '<td>lastName</td>'+
+                        '<td>province</td>'+
+                        '</tr>';
+                    for(let i = 0; i < list.length; i++){
+                content +=getCustomer(list[i])
+            }
+            document.getElementById('customerList').innerHTML = content;
+                }
+            })
+        }
+        function getCustomer(customer1){
+            return `<tr><td>${customer1.id}</td>`+
+                `<td>${customer1.firstName}</td>`+
+                `<td>${customer1.lastName}</td>` +
+                `<td>${customer1.province.nameProvince}</td>`+
+                `<td><a onclick="deleteCustomer(this)" href="${customer1.id}">delete</a> </td></tr>`
+        }
+    </script>
+</head>
+<body>
+<form id="thanh">
+    <input type="text" id="firstName">
+    <input type="text" id="lastName">
+    <input type="text" id="province">
+    <input type="button" value="create customer" onclick="addCustomer()">
+</form>
+<h3>List Customer</h3>
+<table id="customerList">
+    <tr>
+        <th>Id</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Province</th>
+        <th>Delete</th>
+    </tr>
+    <th:block th:each="customer: ${customer}">
+        <tr>
+            <td th:text="${customer.getId()}"></td>
+            <td th:text="${customer.firstName}"></td>
+            <td th:text="${customer.lastName}"></td>
+            <td th:text="${customer.province.nameProvince}"></td>
+            <td><a th:href="${customer.getId()}" onclick="deleteCustomer(this)" >Delete</a></td>
+        </tr>
+    </th:block>
+</table>
+</body>
+</html>

@@ -8,14 +8,14 @@ public class Province {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String province;
+    private String nameProvince;
 
     public Province() {
     }
 
     public Province(Long id, String province) {
         this.id = id;
-        this.province = province;
+        this.nameProvince = province;
     }
 
     public Long getId() {
@@ -26,11 +26,11 @@ public class Province {
         this.id = id;
     }
 
-    public String getProvince() {
-        return province;
+    public String getNameProvince() {
+        return nameProvince;
     }
 
-    public void setProvince(String province) {
-        this.province = province;
+    public void setNameProvince(String province) {
+        this.nameProvince = province;
     }
 }
