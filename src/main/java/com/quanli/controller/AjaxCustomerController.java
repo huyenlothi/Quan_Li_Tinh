@@ -1,6 +1,7 @@
 package com.quanli.controller;
 
 import com.quanli.model.Customer;
+import com.quanli.model.Province;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import service.customer.CustomerService;
+import service.province.IProvinceService;
 
 import java.security.acl.LastOwnerException;
 
@@ -16,6 +18,12 @@ import java.security.acl.LastOwnerException;
 public class AjaxCustomerController {
 @Autowired
     private CustomerService customerService;
+    @Autowired
+    private IProvinceService provinceService;
+    @ModelAttribute("provinces")
+    Iterable<Province> provinces(){
+        return provinceService.findAll();
+    }
 @GetMapping("/list")
     public ModelAndView list(){
     ModelAndView modelAndView = new ModelAndView("customer/index");

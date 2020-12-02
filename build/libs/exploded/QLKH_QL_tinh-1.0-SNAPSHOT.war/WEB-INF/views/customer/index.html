@@ -4,7 +4,43 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <style>
+        td,th {
+            text-align: center;
+        }
+    </style>
     <script type="text/javascript">
+        function editCustomer(e){
+            let idCustomer = e.getAttribute("idClass");
+            let s = "#"+ idCustomer;
+            let firstName = $(s +' [name=editFirstName]').val();
+            let lastName = $(s +' [name=editLastName]').val();
+            let province = $(s +' [name=editProvince]').val();
+
+            // let idCus=$('#editId').val();
+            // let firstName= $('#editFirstName').val();
+            // let lastName= $('#editLastName').val();
+            // let province = $('#editProvince').val();
+
+            let json= {firstName: firstName, lastName:lastName,
+                province:{
+                id:province
+                }};
+            $.ajax({
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                type: "PUT",
+                data: JSON.stringify(json),
+                url:"/customers/"+idCustomer,
+                success: function (){
+                    successHandler();
+                }
+            })
+            event.preventDefault();
+
+        }
             function addCustomer(){
                 let firstName = $('#firstName').val();
                 let lastName= $('#lastName').val();
@@ -33,31 +69,9 @@
                 //chặn sự kiện mặc định của thẻ
                 event.preventDefault();
             }
-            function successHandler(){
-                $.ajax({
-                    type:"GET",
-                    url:"/customers",
-                    success: function (list){
-                        let content='    <tr>\n '+'' +
-                            '<td>Id</td>\n'+
-                            '<td>firstName</td>'+
-                            '<td>lastName</td>'+
-                            '<td>province</td>'+
-                            '</tr>';
-                        for(let i = 0; i < list.length; i++){
-                            content +=getCustomer(list[i])
-                        }
-                        document.getElementById('customerList').innerHTML = content;
-                    }
-                })
-            }
-            function getCustomer(customer1){
-                return `<tr><td>${customer1.id}</td>`+
-                    `<td>${customer1.firstName}</td>`+
-                    `<td>${customer1.lastName}</td>` +
-                    `<td>${customer1.province.nameProvince}</td>`+
-                    `<td><a onclick="deleteCustomer(this)" href="${customer1.id}">delete</a> </td></tr>`
-            }
+
+
+
 
         function deleteCustomer(e){
             let idCustomer= e.getAttribute("href");
@@ -74,12 +88,14 @@
             $.ajax({
                 type:"GET",
                 url:"/customers",
-                success: function (list){
+                success: function(list){
                     let content='    <tr>\n '+'' +
                         '<td>Id</td>\n'+
-                        '<td>firstName</td>'+
-                        '<td>lastName</td>'+
-                        '<td>province</td>'+
+                        '<td>FirstName</td>'+
+                        '<td>LastName</td>'+
+                        '<td>Province</td>'+
+                        '<td>Delete</td>'+
+                        '<td>Edit</td>'+
                         '</tr>';
                     for(let i = 0; i < list.length; i++){
                 content +=getCustomer(list[i])
@@ -93,35 +109,102 @@
                 `<td>${customer1.firstName}</td>`+
                 `<td>${customer1.lastName}</td>` +
                 `<td>${customer1.province.nameProvince}</td>`+
-                `<td><a onclick="deleteCustomer(this)" href="${customer1.id}">delete</a> </td></tr>`
+                `<td><a onclick="deleteCustomer(this)" href="${customer1.id}">delete</a> </td>`+
+                `<td></td></tr>`
         }
     </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-<form id="thanh">
-    <input type="text" id="firstName">
-    <input type="text" id="lastName">
-    <input type="text" id="province">
-    <input type="button" value="create customer" onclick="addCustomer()">
-</form>
-<h3>List Customer</h3>
-<table id="customerList">
-    <tr>
-        <th>Id</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Province</th>
-        <th>Delete</th>
-    </tr>
-    <th:block th:each="customer: ${customer}">
+<div class="container">
+    <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Create Customer </button>
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Create Customer </h4>
+                </div>
+                <div class="modal-body">
+                    <form >
+                        <label >First Name</label>
+                        <input type="text" id="firstName"><br/>
+                        <label >Last Name</label>
+                        <input type="text" id="lastName"><br/>
+                        <label >Province</label>
+                        <select name="province" id="province"  >
+                            <option th:each="c:${provinces}" th:value="${c.getId()}" th:text="${c.getNameProvince()}"></option>
+                        </select><br/>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" value="create customer" onclick="addCustomer()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <h3>List Customer</h3>
+    <table id="customerList" border="1px" class="table"  >
         <tr>
-            <td th:text="${customer.getId()}"></td>
-            <td th:text="${customer.firstName}"></td>
-            <td th:text="${customer.lastName}"></td>
-            <td th:text="${customer.province.nameProvince}"></td>
-            <td><a th:href="${customer.getId()}" onclick="deleteCustomer(this)" >Delete</a></td>
+            <th>Id</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Province</th>
+            <th>Edit</th>
+            <th>Delete</th>
         </tr>
-    </th:block>
-</table>
+        <th:block th:each="customer: ${customer}">
+            <tr>
+                <td th:text="${customer.getId()}"></td>
+                <td th:text="${customer.firstName}"></td>
+                <td th:text="${customer.lastName}"></td>
+                <td th:text="${customer.province.nameProvince}"></td>
+                <td><a th:href="${customer.getId()}" onclick="deleteCustomer(this)" >Delete</a></td>
+                <td>
+                    <button type="button" style="padding: 0; font-size: 15px" data-toggle="modal" th:attr="data-target='#exampleModal'+${customer.id}">Edit Customer </button>
+                    <div class="container" style="width: 50px;">
+                        <div th:attr="id='exampleModal'+${customer.id}"class="modal fade"  role="dialog">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">Edit Customer </h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form th:id="${customer.getId()}">
+<!--                                            <input type="hidden" id="editId" name="id" th:value="${customer.getId()}">-->
+                                            <input type="hidden" name="id" th:value="${customer.getId()}">
+                                            <label >First Name</label>
+<!--                                            <input type="text" id="editFirstName" th:value="${customer.getFirstName()}"><br/>-->
+                                            <input type="text" name="editFirstName" th:value="${customer.getFirstName()}"><br/>
+                                            <label >Last Name</label>
+                                            <input type="text" name="editLastName" th:value="${customer.getLastName()}"><br/>
+<!--                                            <input type="text" id="editLastName" th:value="${customer.getLastName()}"><br/>-->
+                                            <label >Province</label>
+<!--                                            <select  id="editProvince"  >-->
+                                            <select  name="editProvince"  >
+                                                <option th:each="c:${provinces}" th:value="${c.getId()}" th:text="${c.getNameProvince()}" th:selected="${customer.province.nameProvince}"></option>
+                                            </select><br/>
+                                            <div class="modal-footer">
+                                                <button th:attr="idClass=${customer.id}" type="button"  data-dismiss="modal" onclick="editCustomer(this)">Edit customer</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </th:block>
+    </table>
+</div>
 </body>
 </html>
